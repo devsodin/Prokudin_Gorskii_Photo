@@ -40,7 +40,7 @@ def align_image2template(i,t,displacement):
 	align = [0,0]
 	for x in range(-displacement,displacement+1):
 		for y in range(-displacement,displacement+1):
-			#displace image
+			#move image
 			moved_i= np.roll(i,[x,y],axis=(0,1))
 			moved_i = moved_i - moved_i.mean(axis=0)
 			
@@ -56,14 +56,13 @@ def align_image2template(i,t,displacement):
 
 	
 
-def photoplate2color(image,displacement,margin_percent):
+def photoplate2color(image,displacement):
 	
 	r = image[:,:,0]
 	g = image[:,:,1]
 	b = image[:,:,2]
 
 	color = np.zeros_like(img_channels)
-	print(color.dtype)
 
 	color[:,:,0] = align_image2template(r,g,displacement)
 	color[:,:,1] = g
@@ -92,8 +91,8 @@ for name, image in images.items():
 	time = t.time()
 	
 	img_3channel = get_color_image(image)
-	img_channels = remove_margins(img_3channels,x_margin_percent,y_margin_percent)
-	color_img = photoplate2color(img_channels,displacement,margin_percent)
+	img_channels = remove_margins(img_3channel,x_margin_percent,y_margin_percent)
+	color_img = photoplate2color(img_channels,displacement)
 	time = t.time() - time
 
 	write_image(name,"_cn", img_channels, ds_folder + "/output/")
