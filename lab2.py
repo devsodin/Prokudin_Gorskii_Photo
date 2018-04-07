@@ -20,12 +20,12 @@ def get_color_image(image):
 	h = int(image.shape[0]/3)
 	w = image.shape[1]
 
-	color_img = np.zeros((h,w,3))
+	color_img = np.zeros((h,w,3),dtype='uint8')
 	
 	for i in range(0,3):
-		color_img[:,:,2-i] = image[h*i:h*(i+1),:]
+		color_img[:,:,i] = image[h*i:h*(i+1),:]
 
-	#return as RGB
+	#return as BGR
 	return color_img
 
 def remove_margins(image,x_margin,y_margin):
@@ -58,15 +58,16 @@ def align_image2template(i,t,displacement):
 
 def photoplate2color(image,displacement):
 	
-	r = image[:,:,0]
+	b = image[:,:,0]
 	g = image[:,:,1]
-	b = image[:,:,2]
+	r = image[:,:,2]
+
 
 	color = np.zeros_like(img_channels)
 
-	color[:,:,0] = align_image2template(r,g,displacement)
+	color[:,:,0] = align_image2template(b,g,displacement)
 	color[:,:,1] = g
-	color[:,:,2] = align_image2template(b,g,displacement)
+	color[:,:,2] = align_image2template(r,g,displacement)
 
 
 
@@ -81,7 +82,7 @@ def write_image(name, subname, image, out_folder):
 	return
 
 ds_folder = "images"
-displacement = 25
+displacement = 20
 x_margin_percent = 0.03
 y_margin_percent = 0.05
 
@@ -95,7 +96,7 @@ for name, image in images.items():
 	color_img = photoplate2color(img_channels,displacement)
 	time = t.time() - time
 
-	write_image(name,"_cn", img_channels, ds_folder + "/output/")
+	write_image(name,"_3channel", img_channels, ds_folder + "/output/")
 	write_image(name,"_color", color_img, ds_folder + "/output/")
 
 	print("Elapsed time: ", time)
